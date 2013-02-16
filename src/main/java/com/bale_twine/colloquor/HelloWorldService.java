@@ -1,6 +1,7 @@
 package com.bale_twine.colloquor;
 
 import com.bale_twine.colloquor.resources.HelloWorldResource;
+import com.bale_twine.colloquor.health.TemplateHealthCheck;
 
 import com.yammer.dropwizard.Service;
 import com.yammer.dropwizard.config.Bootstrap;
@@ -22,6 +23,7 @@ public class HelloWorldService extends Service<HelloWorldConfiguration> {
 		final String template = configuration.getTemplate();
 		final String defaultName = configuration.getDefaultName();
 		environment.addResource(new HelloWorldResource(template, defaultName));
+		environment.addHealthCheck(new TemplateHealthCheck(template));
     }
 
 }
