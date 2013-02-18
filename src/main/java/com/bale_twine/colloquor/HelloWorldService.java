@@ -14,7 +14,7 @@ public class HelloWorldService extends Service<HelloWorldConfiguration> {
 
     @Override
     public void initialize(Bootstrap<HelloWorldConfiguration> bootstrap) {
-        bootstrap.setName("hello-world");
+        bootstrap.setName("colloquor");
     }
 
     @Override
