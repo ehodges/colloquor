@@ -10,9 +10,9 @@ import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.views.ViewBundle;
 
-public class HelloWorldService extends Service<HelloWorldConfiguration> {
+public class ColloquorService extends Service<HelloWorldConfiguration> {
     public static void main(String[] args) throws Exception {
-        new HelloWorldService().run(args);
+        new ColloquorService().run(args);
     }
 
     @Override
