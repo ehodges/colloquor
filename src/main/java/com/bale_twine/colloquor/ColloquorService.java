@@ -10,20 +10,20 @@ import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.views.ViewBundle;
 
-public class ColloquorService extends Service<HelloWorldConfiguration> {
+public class ColloquorService extends Service<ColloquorConfiguration> {
     public static void main(String[] args) throws Exception {
         new ColloquorService().run(args);
     }
 
     @Override
-    public void initialize(Bootstrap<HelloWorldConfiguration> bootstrap) {
+    public void initialize(Bootstrap<ColloquorConfiguration> bootstrap) {
         bootstrap.setName("colloquor");
 		bootstrap.addBundle(new ViewBundle());
         bootstrap.addBundle(new AssetsBundle("/assets/", "/assets/"));
     }
 
     @Override
-    public void run(HelloWorldConfiguration configuration,
+    public void run(ColloquorConfiguration configuration,
                     Environment environment) {
         final String template = configuration.getTemplate();
         final String defaultName = configuration.getDefaultName();
