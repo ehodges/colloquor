@@ -13,11 +13,33 @@ public class ColloquorConfiguration extends Configuration {
     @JsonProperty
     private String defaultName = "Stranger";
 
+    @NotEmpty
+    @JsonProperty
+    private String mongoUri;
+
+    @NotEmpty
+    private String mongoUser = System.getenv("MONGO_USER");
+
+    @NotEmpty
+    private String mongoPass = System.getenv("MONGO_PASS");
+
     public String getTemplate() {
         return template;
     }
 
     public String getDefaultName() {
         return defaultName;
+    }
+
+    public String getMongoUri() {
+        return String.format(mongoUri, mongoUser, mongoPass);
+    }
+
+    public String getMongoUser() {
+        return mongoUser;
+    }
+
+    public String getMongoPass() {
+        return mongoPass;
     }
 }
