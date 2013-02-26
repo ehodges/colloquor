@@ -35,7 +35,7 @@ public class ColloquorService extends Service<ColloquorConfiguration> {
                 configuration.getMongoPass());
         environment.manage(dbClientManager);
         environment.addResource(new HelloWorldResource(template, defaultName));
-        environment.addResource(new HomeResource(dbClientManager.getClient()));
+        environment.addResource(new HomeResource());
         environment.addResource(new TestResource());
         environment.addHealthCheck(new TemplateHealthCheck(template));
     }
