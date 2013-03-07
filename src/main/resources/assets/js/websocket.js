@@ -15,7 +15,7 @@ var initWebSocket = function(websocketConnectionString) {
 
         // Log errors
         connection.onerror = function (error) {
-            $('#webSocketConsole').append('WebSocket Error: ' + error + '\n');
+            $('#webSocketConsole').append('WebSocket Error: ' + error.code + ': ' + error.reason + '\n');
         };
 
         // Log messages from the server
