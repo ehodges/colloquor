@@ -10,12 +10,12 @@ import javax.ws.rs.core.UriInfo;
 import com.bale_twine.colloquor.views.TestView;
 
 import java.net.URI;
-import java.util.List;
 
 @Path("/test")
 @Produces(MediaType.TEXT_HTML)
 public class TestResource {
     public static final int DEFAULT_HTTP_PORT = 80;
+    public static final int NO_HTTP_PORT_SPECIFIED = -1;
     public static final String PORT_SEPERATOR = ":";
     public static final String WEBSOCKET_CONNECTION_STRING_PATTERN = "ws://%s%s";
 
@@ -33,7 +33,7 @@ public class TestResource {
         StringBuilder serverConnection = new StringBuilder(myUri.getHost());
         int port = myUri.getPort();
 
-        if(port != DEFAULT_HTTP_PORT)
+        if(port != DEFAULT_HTTP_PORT && port != NO_HTTP_PORT_SPECIFIED)
             serverConnection.append(PORT_SEPERATOR + Integer.toString(port));
 
         return new TestView(
