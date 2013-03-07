@@ -10,6 +10,15 @@
             width: 50%;
             border: 1px solid black;
         }
+
+        #browserSupportFailureAlert {
+            display: none;
+        }
+
+        #webSocketConsole {
+            height: 150px;
+            width: 98%
+        }
     </style>
 </head>
 <body>
@@ -17,19 +26,39 @@
 
 <div class="container">
     <h1>Test Your System</h1>
+
+    <div id="browserSupportFailureAlert" class="alert alert-error">
+        <span><i class="icon-warning-sign"></i> Your browser does not support WebSockets, this application will not work.</span>
+    </div>
+
+    <h2>Test Video</h2>
+
+    <div class="well">
     <div>
         <video id="video" autoplay="true" />
     </div>
+
     <p>
-        <button onclick="startTest()" id="startButton" class="btn btn-large btn-primary" type="button">Start <i class="icon-facetime-video icon-white"></i></button>
-        <button onclick="stopTest()" id="stopButton" class="btn btn-large btn-primary" type="button" disabled="disabled">Stop <i class="icon-facetime-video icon-white"></i></button>
+        <button id="startButton" class="btn btn-large btn-primary" type="button">Start <i class="icon-facetime-video icon-white"></i></button>
+        <button id="stopButton" class="btn btn-large btn-primary" type="button" disabled="disabled">Stop <i class="icon-facetime-video icon-white"></i></button>
     </p>
+    </div>
+
+    <h2>Test WebSockets</h2>
+    <div class="well">
+        <textarea id="webSocketConsole"></textarea></pre>
+        <p><button id="pingButton" class="btn btn-large btn-primary" type="button" disabled="disabled">Ping Server</p>
+    </div>
 </div>
 <script src="http://code.jquery.com/jquery.js"></script>
 <script src="/assets/bootstrap/js/bootstrap.min.js"></script>
 <script src="/assets/js/video.js"></script>
+<script src="/assets/js/websocket.js"></script>
 <script>
-    $("#testNavLink").addClass("active");
+    $(document).ready(function() {
+        $("#testNavLink").addClass('active');
+        initWebSocket('{{websocketConnectionString}}');
+    });
 </script>
 </body>
 </html>

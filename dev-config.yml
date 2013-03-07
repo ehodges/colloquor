@@ -1,3 +1,5 @@
 template: Hello, %s!
 defaultName: Stranger
 mongoUri: mongodb://%s:%s@linus.mongohq.com:10072/colloquor
+http:
+    connectorType: nonblocking

@@ -1,9 +1,7 @@
 package com.bale_twine.colloquor;
 
 import com.bale_twine.colloquor.health.TemplateHealthCheck;
-import com.bale_twine.colloquor.resources.HelloWorldResource;
-import com.bale_twine.colloquor.resources.HomeResource;
-import com.bale_twine.colloquor.resources.TestResource;
+import com.bale_twine.colloquor.resources.*;
 
 import com.yammer.dropwizard.Service;
 import com.yammer.dropwizard.assets.AssetsBundle;
@@ -12,6 +10,8 @@ import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.views.ViewBundle;
 
 public class ColloquorService extends Service<ColloquorConfiguration> {
+    public static final String TEST_WEBSOCKET_ENDPOINT = "/web-socket-test";
+
     public static void main(String[] args) throws Exception {
         new ColloquorService().run(args);
     }
@@ -36,7 +36,8 @@ public class ColloquorService extends Service<ColloquorConfiguration> {
         environment.manage(dbClientManager);
         environment.addResource(new HelloWorldResource(template, defaultName));
         environment.addResource(new HomeResource());
-        environment.addResource(new TestResource());
+        environment.addResource(new TestResource(TEST_WEBSOCKET_ENDPOINT));
+        environment.addServlet(new TestWebSocketServlet(), TEST_WEBSOCKET_ENDPOINT);
         environment.addHealthCheck(new TemplateHealthCheck(template));
     }
 
