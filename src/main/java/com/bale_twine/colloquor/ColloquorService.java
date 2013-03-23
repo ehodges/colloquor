@@ -74,7 +74,7 @@ public class ColloquorService extends Service<ColloquorConfiguration> {
         DB mongoDB = dbClientManager.getDB();
 
         InetAddress address = InetAddress.getLocalHost();
-        String hostname = address.getHostName();
+        String hostname = address.getHostName().replaceAll(".","_");
 
         SessionManager sessionManager = null;
         MongoSessionIdManager sessionIdManager = null;
