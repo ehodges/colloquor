@@ -8,6 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 public class TestWebSocketServlet extends WebSocketServlet {
     @Override
     public WebSocket doWebSocketConnect(HttpServletRequest httpServletRequest, String s) {
-        return new TestWebSocket();
+        return new TestWebSocket(httpServletRequest.getSession());
     }
 }

@@ -4,6 +4,7 @@ import org.eclipse.jetty.websocket.WebSocket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 public class TestWebSocket implements WebSocket.OnTextMessage {
@@ -13,30 +14,37 @@ public class TestWebSocket implements WebSocket.OnTextMessage {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TestWebSocket.class);
 
-    Connection m_connection;
+    private final HttpSession session;
+
+    private Connection connection;
+
+    public TestWebSocket(HttpSession session) {
+        this.session = session;
+    }
 
     @Override
     public void onOpen(Connection connection) {
+
         try {
-            connection.sendMessage(TEST_SALUTATION);
+            connection.sendMessage(TEST_SALUTATION +" "+ session.getId());
         } catch (IOException e) {
             LOGGER.error("onOpen Failed", e);
         }
 
-        m_connection = connection;
+        this.connection = connection;
     }
 
     @Override
     public void onClose(int i, String s) {
-        m_connection = null;
+        connection = null;
     }
 
     @Override
     public void onMessage(String s) {
         if (s.equalsIgnoreCase(TEST_REQEST)) {
-            if (m_connection != null) {
+            if (connection != null) {
                 try {
-                    m_connection.sendMessage(TEST_REPLY);
+                    connection.sendMessage(TEST_REPLY +" "+ session.getId());
                 } catch (IOException e) {
                     LOGGER.error("onMessage Failed", e);
                 }
