@@ -4,7 +4,14 @@ import com.yammer.dropwizard.views.View;
 
 public class HomeView extends View {
 
-    public HomeView() {
+    private final String userName;
+
+    public HomeView(String userName) {
         super("home.mustache");
+        this.userName = userName;
+    }
+
+    public String getUserName() {
+        return userName;
     }
 }

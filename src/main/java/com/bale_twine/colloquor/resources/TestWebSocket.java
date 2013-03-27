@@ -9,7 +9,7 @@ import java.io.IOException;
 
 public class TestWebSocket implements WebSocket.OnTextMessage {
     public static final String TEST_REPLY = "pong";
-    public static final String TEST_REQEST = "ping";
+    public static final String TEST_REQUEST = "ping";
     public static final String TEST_SALUTATION = "Hello!";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TestWebSocket.class);
@@ -41,7 +41,7 @@ public class TestWebSocket implements WebSocket.OnTextMessage {
 
     @Override
     public void onMessage(String s) {
-        if (s.equalsIgnoreCase(TEST_REQEST)) {
+        if (s.equalsIgnoreCase(TEST_REQUEST)) {
             if (connection != null) {
                 try {
                     connection.sendMessage(TEST_REPLY +" "+ session.getId());

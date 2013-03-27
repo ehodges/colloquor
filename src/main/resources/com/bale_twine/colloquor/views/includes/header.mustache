@@ -13,7 +13,40 @@
                     <li id="testNavLink"><a href="/test">Test</a></li>
                     <li id="contactNavLink"><a href="#contact">Contact</a></li>
                 </ul>
+                <div class="btn-group">
+                    <a class="btn btn-inverse dropdown-toggle" data-toggle="dropdown" href="#">
+                        <i class="icon-user icon-white"></i> <span id="usernamePlaceholder">{{userName}}</span>
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a tabindex="-1" data-toggle="modal" href="#changeUsernameModal">Change Username</a></li>
+                    </ul>
+                </div>
             </div><!--/.nav-collapse -->
         </div>
+    </div>
+</div>
+<!-- Change Username Modal -->
+<div id="changeUsernameModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="changeUsernameLabel">Change Your Username</h3>
+    </div>
+    <div class="modal-body">
+        <div id="emptyUsernameAlert" class="alert alert-error">
+            Please Enter A Username.
+        </div>
+        <form class="form-horizontal" onsubmit="return false;">
+            <div class="control-group">
+                <label class="control-label" for="userNameInput">Username:</label>
+                <div class="controls">
+                    <input type="text" id="userNameInput" placeholder="Username" value="{{userName}}">
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+        <button id="saveUsernameChange" class="btn btn-primary">Save Changes</button>
     </div>
 </div>
