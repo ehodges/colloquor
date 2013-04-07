@@ -53,4 +53,19 @@ $(document).ready(function() {
     $('#changeUsernameModal').on('hidden', function () {
         $('#emptyUsernameAlert').hide(0);
     })
+
+
+    var addNewRoom = function() {
+        $.ajax({
+            type: 'POST',
+            url: '/room/new',
+            success: refreshView
+        });
+    }
+
+    var refreshView = function(data, textStatus, jqXHR) {
+        window.location.assign('/activeRooms');
+    }
+
+    $('#addNewRoom').click(addNewRoom);
 });

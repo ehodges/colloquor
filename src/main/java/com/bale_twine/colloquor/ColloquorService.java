@@ -55,6 +55,8 @@ public class ColloquorService extends Service<ColloquorConfiguration> {
         environment.addResource(new HomeResource());
         environment.addResource(new TestPageResource(TEST_WEBSOCKET_ENDPOINT));
         environment.addResource(new UserResource());
+        environment.addResource(new ActiveRoomsResource());
+        environment.addResource(new RoomResource());
         environment.addServlet(new TestWebSocketServlet(), TEST_WEBSOCKET_ENDPOINT);
         environment.addHealthCheck(new TemplateHealthCheck(template));
     }

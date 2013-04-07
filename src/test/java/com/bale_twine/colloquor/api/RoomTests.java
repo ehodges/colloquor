@@ -2,69 +2,69 @@ package com.bale_twine.colloquor.api;
 
 import org.junit.Test;
 
-import java.util.Iterator;
+import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class RoomTests {
 
-    public static final String TEST_USERNAME = "Ed";
-    public static final String TEST_USERNAME_ONE = "Bob";
-
     @Test
-    public void testCreateAndGetRoom() {
-        User mockUser = mock(User.class);
-        when(mockUser.getName()).thenReturn(TEST_USERNAME);
-        Room testRoom = new Room(mockUser);
-        Set<User> occupants = testRoom.getOccupants();
-        assertTrue(occupants.contains(mockUser));
-        assertEquals(1, occupants.size());
-        assertEquals(TEST_USERNAME, occupants.iterator().next().getName());
+    public void testGetRoomId() {
+        UUID uuid = UUID.randomUUID();
+
+        Room room = new Room(uuid);
+        assertEquals(uuid, room.getId());
     }
 
     @Test
-    public void testCreateRoomAndAddUser() {
-        User mockUser = mock(User.class);
-        when(mockUser.getName()).thenReturn(TEST_USERNAME);
-        User mockUserOne = mock(User.class);
-        when(mockUserOne.getName()).thenReturn(TEST_USERNAME_ONE);
-        Room testRoom = new Room(mockUser);
-        testRoom.addUser(mockUserOne);
-        Set<User> occupants = testRoom.getOccupants();
-        assertTrue(occupants.contains(mockUser));
-        assertTrue(occupants.contains(mockUserOne));
-        assertEquals(2, occupants.size());
-        Iterator<User> occupantsIterator = occupants.iterator();
+    public void testOccupants() {
+        UUID uuid = UUID.randomUUID();
 
-        boolean foundUserOne = false;
-        boolean foundUserTwo = false;
-
-        while(occupantsIterator.hasNext()) {
-            User user = occupantsIterator.next();
-
-            if(user.getName().equals(TEST_USERNAME)) {
-                foundUserOne = true;
-            } else if(user.getName().equals(TEST_USERNAME_ONE)) {
-                foundUserTwo = true;
-            }
-
-        }
-        assertTrue(foundUserOne);
-        assertTrue(foundUserTwo);
+        Room room = new Room(uuid);
+        Set<User> occupants = new HashSet<User>();
+        occupants.add(new User("Bob"));
+        room.setOccupants(occupants);
+        assertEquals(occupants, room.getOccupants());
     }
 
     @Test
-    public void testRoomIsASetOfUsers() {
-        User mockUser = mock(User.class);
-        when(mockUser.getName()).thenReturn(TEST_USERNAME);
-        Room testRoom = new Room(mockUser);
-        testRoom.addUser(mockUser);
-        testRoom.addUser(mockUser);
-        Set<User> occupants = testRoom.getOccupants();
-        assertEquals(1, occupants.size());
+    public void testNoOccupants() {
+        UUID uuid = UUID.randomUUID();
+
+        Room room = new Room(uuid);
+        Set<User> occupants = room.getOccupants();
+        assertEquals(0, occupants.size());
+    }
+
+    @Test
+    public void testRoomsHaveTitlesWithConstructor() {
+        String testTitle = "Bob's Room";
+        UUID uuid = UUID.randomUUID();
+
+        Room room = new Room(uuid, testTitle);
+        assertEquals(testTitle, room.getTitle());
+    }
+
+    @Test
+    public void testRoomsHaveTitlesWithSetter() {
+        String testTitle = "Bob's Room";
+        UUID uuid = UUID.randomUUID();
+
+        Room room = new Room(uuid);
+        room.setTitle(testTitle);
+        assertEquals(testTitle, room.getTitle());
+    }
+
+    @Test
+    public void testRoomsHaveTitlesWithDefault() {
+        UUID uuid = UUID.randomUUID();
+
+        Room room = new Room(uuid);
+
+        assertEquals("Room " + uuid, room.getTitle());
     }
 }
