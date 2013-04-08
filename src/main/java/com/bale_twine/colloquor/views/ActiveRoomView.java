@@ -5,20 +5,13 @@ import com.yammer.dropwizard.views.View;
 
 import java.util.List;
 
-public class ActiveRoomView extends View {
-
-    private final String userName;
+public class ActiveRoomView extends BaseUserView {
 
     private final List<Room> rooms;
 
     public ActiveRoomView(String userName, List<Room> rooms) {
-        super("activeRooms.mustache");
-        this.userName = userName;
+        super("activeRooms.mustache", userName);
         this.rooms = rooms;
-    }
-
-    public String getUserName() {
-        return userName;
     }
 
     public List<Room> getRooms() {

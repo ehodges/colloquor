@@ -45,10 +45,11 @@ public class RoomResource {
 
     @GET
     @Produces(MediaType.TEXT_HTML)
-    public RoomView getRoomView(@PathParam("id") String id) {
+    public RoomView getRoomView(@Context HttpServletRequest request, @PathParam("id") String id) {
         UUID uuid = UUID.fromString(id);
         LOGGER.info("ID : " + uuid.toString());
-        return new RoomView(uuid);
+        String name = SessionDataHelper.getUsername(request);
+        return new RoomView(uuid, name);
     }
 
 //    @PUT
