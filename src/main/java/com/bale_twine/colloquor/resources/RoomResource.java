@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import java.util.Set;
 import java.util.UUID;
 
 @Path("/room/{id}")
@@ -27,7 +28,13 @@ public class RoomResource {
         ActiveRooms activeRooms = ActiveRoomsAccessor.getActiveRooms();
         activeRooms.add(newRoom);
 
-        return new Room(newRoom.getId());
+        Room room = new Room(newRoom.getId());
+
+        Set<User> occupants = room.getOccupants();
+        occupants.add(new User(name));
+        room.setOccupants(occupants);
+
+        return room;
     }
 
     @GET

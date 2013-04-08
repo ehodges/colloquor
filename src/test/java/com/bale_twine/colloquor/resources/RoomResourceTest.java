@@ -5,6 +5,7 @@ import com.bale_twine.colloquor.core.ActiveRooms;
 import com.bale_twine.colloquor.core.ActiveRoomsAccessor;
 import com.bale_twine.colloquor.api.Room;
 import com.bale_twine.colloquor.views.RoomView;
+import org.junit.After;
 import org.junit.Test;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +19,12 @@ import static org.mockito.Mockito.when;
 public class RoomResourceTest {
 
     public static final String TEST_NAME = "Fred";
+
+    @After
+    public void clearAllRoomsFromActiveRooms() {
+        ActiveRooms activeRooms = ActiveRoomsAccessor.getActiveRooms();
+        activeRooms.removeAllRooms();
+    }
 
     @Test
     public void testGetExistingRoom() {
@@ -49,5 +56,24 @@ public class RoomResourceTest {
         activeRooms.add(newRoom);
         RoomView roomView = roomResource.getRoomView(mockRequest, uuid.toString());
         assertEquals(uuid, roomView.getId());
+    }
+
+    @Test
+    public void testCreateRoom() {
+        RoomResource roomResource = new RoomResource();
+
+        HttpServletRequest mockRequest = mock(HttpServletRequest.class);
+        HttpSession mockSession = mock(HttpSession.class);
+
+        when(mockSession.getAttribute("username")).thenReturn("Robert");
+        when(mockRequest.getSession()).thenReturn(mockSession);
+
+        Room room = roomResource.createRoom(mockRequest);
+
+        ActiveRooms activeRooms = ActiveRoomsAccessor.getActiveRooms();
+
+        assertEquals(1, activeRooms.size());
+        assertEquals(room.getId(), activeRooms.getRooms().iterator().next().getId());
+        assertEquals("Robert", room.getOccupants().iterator().next().getName());
     }
 }
