@@ -5,13 +5,11 @@ import org.junit.Test;
 import java.util.Set;
 import java.util.UUID;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ActiveRoomsTests {
+public class ActiveRoomsTest {
 
     @Test
     public void testAddSingleRoom() {
@@ -60,6 +58,23 @@ public class ActiveRoomsTests {
         assertTrue(activeRooms.contains(mockRoom));
         Room returnedRoom = activeRooms.getRoom(uuid);
         assertEquals(mockRoom, returnedRoom);
+    }
+
+    @Test
+    public void testGetSpecificRoomFailure() {
+        Room mockRoom = mock(Room.class);
+        UUID uuid = UUID.randomUUID();
+        UUID otherId = UUID.randomUUID();
+        when(mockRoom.getId()).thenReturn(uuid);
+
+        ActiveRooms activeRooms = new ActiveRooms();
+        activeRooms.add(mockRoom);
+        Room returnedRoom = activeRooms.getRoom(UUID.randomUUID());
+
+        assertEquals(1, activeRooms.size());
+        assertTrue(activeRooms.contains(mockRoom));
+
+        assertNull(returnedRoom);
     }
 
     @Test

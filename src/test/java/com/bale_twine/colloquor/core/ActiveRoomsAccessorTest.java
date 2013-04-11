@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class ActiveRoomsAccessorTests {
+public class ActiveRoomsAccessorTest {
 
     @Test
     public void testActiveRoomsIsSingleInstance() {
