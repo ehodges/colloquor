@@ -93,4 +93,20 @@ public class RoomTest {
         occupants = testRoom.getOccupants();
         assertFalse(occupants.contains(mockUserOne));
     }
+
+    @Test
+    public void testUserAndTitleConstructor() {
+        User mockUser = mock(User.class);
+        final String testTitle = "TestTitle";
+        Room room = new Room(mockUser, testTitle);
+        assertEquals(testTitle, room.getTitle());
+    }
+
+    @Test
+    public void testUserAndTitleConstructorAlternative() {
+        User mockUser = mock(User.class);
+        final String testTitle = "TestTitleOne";
+        Room room = new Room(mockUser, testTitle);
+        assertEquals(testTitle, room.getTitle());
+    }
 }
