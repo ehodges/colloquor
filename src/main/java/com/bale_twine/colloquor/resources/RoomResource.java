@@ -54,9 +54,14 @@ public class RoomResource {
     @Produces(MediaType.TEXT_HTML)
     public RoomView getRoomView(@Context HttpServletRequest request, @PathParam("id") String id) {
         UUID uuid = UUID.fromString(id);
-        LOGGER.info("ID : " + uuid.toString());
+
+        ActiveRooms activeRooms = ActiveRoomsAccessor.getActiveRooms();
+
         String name = SessionDataHelper.getUsername(request);
-        return new RoomView(uuid, name);
+
+        com.bale_twine.colloquor.core.Room room = activeRooms.getRoom(uuid);
+
+        return new RoomView(room, name);
     }
 
 //    @PUT

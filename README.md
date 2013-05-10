@@ -14,4 +14,6 @@ Building
 Running
 -------
 
+	$ export MONGO_USER=<username>
+	$ export MONGO_PASS=<password>
 	$ java -jar target/colloquor-0.0.1-SNAPSHOT.jar server dev-config.yml

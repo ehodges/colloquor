@@ -55,7 +55,7 @@ public class RoomResourceTest {
 
         activeRooms.add(newRoom);
         RoomView roomView = roomResource.getRoomView(mockRequest, uuid.toString());
-        assertEquals(uuid, roomView.getId());
+        assertEquals(uuid.toString(), roomView.getId());
     }
 
     @Test
