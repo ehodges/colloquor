@@ -61,6 +61,10 @@ public class RoomResource {
 
         com.bale_twine.colloquor.core.Room room = activeRooms.getRoom(uuid);
 
+        User user = new User(name);
+
+        room.addUser(user);
+
         return new RoomView(room, name);
     }
 
