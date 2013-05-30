@@ -25,6 +25,7 @@ public class ColloquorService extends Service<ColloquorConfiguration> {
     public static final int ONE_HOUR = 3600;
     private static final String SESSION_DB_COLLECTION = "sessions";
     private static final String TEST_WEBSOCKET_ENDPOINT = "/web-socket-test";
+    private static final String ROOM_WEBSOCKET_ENDPOINT = "/web-socket-room";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ColloquorService.class);
 
@@ -56,7 +57,7 @@ public class ColloquorService extends Service<ColloquorConfiguration> {
         environment.addResource(new TestPageResource(TEST_WEBSOCKET_ENDPOINT));
         environment.addResource(new UserResource());
         environment.addResource(new ActiveRoomsResource());
-        environment.addResource(new RoomResource());
+        environment.addResource(new RoomResource(ROOM_WEBSOCKET_ENDPOINT));
         environment.addServlet(new TestWebSocketServlet(), TEST_WEBSOCKET_ENDPOINT);
         environment.addHealthCheck(new TemplateHealthCheck(template));
     }

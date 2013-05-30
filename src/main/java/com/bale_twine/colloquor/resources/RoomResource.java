@@ -19,6 +19,11 @@ import java.util.UUID;
 public class RoomResource {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RoomResource.class);
+    private final String websocketEndpoint;
+
+    public RoomResource(String websocketEndpoint) {
+        this.websocketEndpoint = websocketEndpoint;
+    }
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
@@ -65,7 +70,7 @@ public class RoomResource {
 
         room.addUser(user);
 
-        return new RoomView(room, name);
+        return new RoomView(room, name, websocketEndpoint);
     }
 
 //    @PUT

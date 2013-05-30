@@ -21,6 +21,7 @@ public class RoomResourceTest {
 
     public static final String TEST_USERNAME_ONE = "Graham Chapman";
     private static final String TEST_USERNAME_TWO = "Eric Idle";
+    public static final String TEST_WEB_SOCKET_ENDPOINT = "WEB_SOCKET_ENDPOINT";
 
     @After
     public void clearAllRoomsFromActiveRooms() {
@@ -30,7 +31,7 @@ public class RoomResourceTest {
 
     @Test
     public void testGetExistingRoom() {
-        RoomResource roomResource = new RoomResource();
+        RoomResource roomResource = new RoomResource(TEST_WEB_SOCKET_ENDPOINT);
 
         ActiveRooms activeRooms = ActiveRoomsAccessor.getActiveRooms();
         com.bale_twine.colloquor.core.Room newRoom = new com.bale_twine.colloquor.core.Room(new User(TEST_USERNAME_ONE));
@@ -43,7 +44,7 @@ public class RoomResourceTest {
 
     @Test
     public void testGetExistingRoomView() {
-        RoomResource roomResource = new RoomResource();
+        RoomResource roomResource = new RoomResource(TEST_WEB_SOCKET_ENDPOINT);
 
         ActiveRooms activeRooms = ActiveRoomsAccessor.getActiveRooms();
         com.bale_twine.colloquor.core.Room newRoom = mock(com.bale_twine.colloquor.core.Room.class);
@@ -62,7 +63,7 @@ public class RoomResourceTest {
 
     @Test
     public void testCreateRoom() {
-        RoomResource roomResource = new RoomResource();
+        RoomResource roomResource = new RoomResource(TEST_WEB_SOCKET_ENDPOINT);
 
         HttpServletRequest mockRequest = mock(HttpServletRequest.class);
         HttpSession mockSession = mock(HttpSession.class);
@@ -81,7 +82,7 @@ public class RoomResourceTest {
 
     @Test
     public void testGetRoomAddsUser() {
-        RoomResource roomResource = new RoomResource();
+        RoomResource roomResource = new RoomResource(TEST_WEB_SOCKET_ENDPOINT);
 
         ActiveRooms activeRooms = ActiveRoomsAccessor.getActiveRooms();
         com.bale_twine.colloquor.core.Room mockRoom = mock(com.bale_twine.colloquor.core.Room.class);

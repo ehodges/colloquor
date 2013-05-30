@@ -1,4 +1,4 @@
-$(document).ready(function() {
+var initVideo = function() {
     var lmsObject;
 
     hasGetUserMedia = function() {
@@ -36,4 +36,4 @@ $(document).ready(function() {
 
     $('#stopButton').click(stopTest);
     $('#startButton').click(startTest);
-});
+};

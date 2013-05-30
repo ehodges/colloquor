@@ -58,6 +58,8 @@
 <script>
     $(document).ready(function() {
         $("#testNavLink").addClass('active');
+        initColloquor();
+        initVideo();
         initWebSocket('{{websocketConnectionString}}');
     });
 </script>

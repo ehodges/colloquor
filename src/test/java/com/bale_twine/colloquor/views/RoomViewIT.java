@@ -24,6 +24,8 @@ public class RoomViewIT {
     private static final String TEST_USER_TWO = "Michael Palin";
     private static final String TEST_USER_THREE = "Terry Jones";
 
+    public static final String TEST_WEB_SOCKET_ENDPOINT = "WEB_SOCKET_ENDPOINT";
+
     @Test
     public void testRoomWithName() {
         final String TEST_ROOM_NAME = "A Test Room Name";
@@ -41,7 +43,7 @@ public class RoomViewIT {
         String id = room.getId().toString();
         activeRooms.add(room);
 
-        RoomResource roomResource = new RoomResource();
+        RoomResource roomResource = new RoomResource(TEST_WEB_SOCKET_ENDPOINT);
         RoomView roomView = roomResource.getRoomView(mockRequest, id);
 
         assertEquals(TEST_ROOM_NAME, roomView.getName());
@@ -64,7 +66,7 @@ public class RoomViewIT {
         String id = room.getId().toString();
         activeRooms.add(room);
 
-        RoomResource roomResource = new RoomResource();
+        RoomResource roomResource = new RoomResource(TEST_WEB_SOCKET_ENDPOINT);
         RoomView roomView = roomResource.getRoomView(mockRequest, id);
 
         assertEquals(id, roomView.getId());
@@ -98,7 +100,7 @@ public class RoomViewIT {
 
         activeRooms.add(roomOne);
 
-        RoomResource rr = new RoomResource();
+        RoomResource rr = new RoomResource(TEST_WEB_SOCKET_ENDPOINT);
         RoomView rv = rr.getRoomView(mockRequestTwo, idOne);
         Set<User> occupants = rv.getOccupants();
 
@@ -126,7 +128,7 @@ public class RoomViewIT {
 
         activeRooms.add(roomOne);
 
-        RoomResource rr = new RoomResource();
+        RoomResource rr = new RoomResource(TEST_WEB_SOCKET_ENDPOINT);
 
         RoomView rv = rr.getRoomView(mockRequestOne, idOne);
         Set<User> occupants = rv.getOccupants();
@@ -162,7 +164,7 @@ public class RoomViewIT {
         activeRooms.add(roomOne);
         activeRooms.add(roomTwo);
 
-        RoomResource rr = new RoomResource();
+        RoomResource rr = new RoomResource(TEST_WEB_SOCKET_ENDPOINT);
         RoomView rv = rr.getRoomView(mockRequestTwo, idOne);
         Set<User> occupants = rv.getOccupants();
         assertEquals(2, occupants.size());

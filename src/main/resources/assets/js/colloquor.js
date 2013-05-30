@@ -1,13 +1,39 @@
-$(document).ready(function() {
+"use strict";
+
+var UserDisplay = function(element) {
+    this.element = $(element);
+    return this;
+}
+
+UserDisplay.prototype.update = function(name) {
+    this.element.text(name);
+}
+
+var ChangeUsernameModal = function(element) {
+    this.element = $(element);
+    return this;
+}
+
+ChangeUsernameModal.prototype.show = function() {
+    this.element.modal('show');
+}
+
+ChangeUsernameModal.prototype.hide = function() {
+    this.element.modal('hide');
+}
+
+var initColloquor = function() {
 
     var ENTER_KEYCODE = 13;
     var ESC_KEYCODE = 27;
     var USER_ENDPOINT = '/user';
 
+    var userDisplay = new UserDisplay('#usernamePlaceholder');
+    var changeUsernameModal = new ChangeUsernameModal('#changeUsernameModal');
 
     var updateDisplayedUsernameWithData = function(data, textStatus, jqXHR) {
         if(data.name) {
-            $('#usernamePlaceholder').text(data.name);
+            userDisplay.update(data.name);
         }
     }
 
@@ -28,7 +54,7 @@ $(document).ready(function() {
                 success: updateDisplayedUsernameWithData
             });
 
-            $('#changeUsernameModal').modal('hide');
+            changeUsernameModal.hide();
         }
     }
 
@@ -68,4 +94,4 @@ $(document).ready(function() {
     }
 
     $('#addNewRoom').click(addNewRoom);
-});
+};
