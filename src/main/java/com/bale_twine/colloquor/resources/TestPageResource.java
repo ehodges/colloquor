@@ -8,6 +8,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 
+import com.bale_twine.colloquor.MongoDBClientManager;
 import com.bale_twine.colloquor.views.TestView;
 
 import java.net.URI;
@@ -22,9 +23,12 @@ public class TestPageResource {
 
     @Context
     private static UriInfo uri;
-    private final String websocketEndpoint;
 
-    public TestPageResource(String websocketEndpoint) {
+    private final String websocketEndpoint;
+    private final MongoDBClientManager dbClientManager;
+
+    public TestPageResource(MongoDBClientManager dbClientManager, String websocketEndpoint) {
+        this.dbClientManager = dbClientManager;
         this.websocketEndpoint = websocketEndpoint;
     }
 
@@ -37,7 +41,8 @@ public class TestPageResource {
         if(port != DEFAULT_HTTP_PORT && port != NO_HTTP_PORT_SPECIFIED)
             serverConnection.append(PORT_SEPARATOR + Integer.toString(port));
 
-        String name = SessionDataHelper.getUsername(request);
+        String guid = SessionDataHelper.getGUID(request);
+        String name = dbClientManager.getUsername(guid);
 
         return new TestView(name,
                 String.format(WEBSOCKET_CONNECTION_STRING_PATTERN,

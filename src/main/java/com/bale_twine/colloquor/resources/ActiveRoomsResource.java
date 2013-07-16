@@ -1,5 +1,6 @@
 package com.bale_twine.colloquor.resources;
 
+import com.bale_twine.colloquor.MongoDBClientManager;
 import com.bale_twine.colloquor.api.Room;
 import com.bale_twine.colloquor.core.ActiveRooms;
 import com.bale_twine.colloquor.core.ActiveRoomsAccessor;
@@ -18,10 +19,18 @@ import java.util.Set;
 @Path("/activeRooms")
 public class ActiveRoomsResource {
 
+    private MongoDBClientManager dbClientManager;
+
+    public ActiveRoomsResource (MongoDBClientManager dbClientManager) {
+        this.dbClientManager = dbClientManager;
+    }
+
     @GET
     @Produces(MediaType.TEXT_HTML)
     public ActiveRoomView getActiveRoomView(@Context HttpServletRequest request) {
-        String name = SessionDataHelper.getUsername(request);
+        String guid = SessionDataHelper.getGUID(request);
+        String name = dbClientManager.getUsername(guid);
+
         ActiveRooms activeRooms = ActiveRoomsAccessor.getActiveRooms();
 
         Set<com.bale_twine.colloquor.core.Room> activeRoomsList = activeRooms.getRooms();

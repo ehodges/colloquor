@@ -1,5 +1,6 @@
 package com.bale_twine.colloquor.resources;
 
+import com.bale_twine.colloquor.MongoDBClientManager;
 import com.bale_twine.colloquor.api.Room;
 import com.bale_twine.colloquor.api.User;
 import com.bale_twine.colloquor.core.ActiveRooms;
@@ -20,15 +21,19 @@ public class RoomResource {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RoomResource.class);
     private final String websocketEndpoint;
+    private final MongoDBClientManager dbClientManager;
 
-    public RoomResource(String websocketEndpoint) {
+    public RoomResource(String websocketEndpoint, MongoDBClientManager dbClientManager) {
         this.websocketEndpoint = websocketEndpoint;
+        this.dbClientManager = dbClientManager;
     }
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     public Room createRoom(@Context HttpServletRequest request) {
-        String name = SessionDataHelper.getUsername(request);
+        String guid = SessionDataHelper.getGUID(request);
+        String name = dbClientManager.getUsername(guid);
+
         com.bale_twine.colloquor.core.Room newRoom = new com.bale_twine.colloquor.core.Room(new User(name));
         ActiveRooms activeRooms = ActiveRoomsAccessor.getActiveRooms();
         activeRooms.add(newRoom);
@@ -62,7 +67,8 @@ public class RoomResource {
 
         ActiveRooms activeRooms = ActiveRoomsAccessor.getActiveRooms();
 
-        String name = SessionDataHelper.getUsername(request);
+        String guid = SessionDataHelper.getGUID(request);
+        String name = dbClientManager.getUsername(guid);
 
         com.bale_twine.colloquor.core.Room room = activeRooms.getRoom(uuid);
 

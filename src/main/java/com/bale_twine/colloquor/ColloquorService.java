@@ -53,11 +53,11 @@ public class ColloquorService extends Service<ColloquorConfiguration> {
         environment.setSessionHandler(sessionHandler);
 
         environment.addResource(new HelloWorldResource(template, defaultName));
-        environment.addResource(new HomeResource());
-        environment.addResource(new TestPageResource(TEST_WEBSOCKET_ENDPOINT));
-        environment.addResource(new UserResource());
-        environment.addResource(new ActiveRoomsResource());
-        environment.addResource(new RoomResource(ROOM_WEBSOCKET_ENDPOINT));
+        environment.addResource(new HomeResource(dbClientManager));
+        environment.addResource(new TestPageResource(dbClientManager, TEST_WEBSOCKET_ENDPOINT));
+        environment.addResource(new UserResource(dbClientManager));
+        environment.addResource(new ActiveRoomsResource(dbClientManager));
+        environment.addResource(new RoomResource(ROOM_WEBSOCKET_ENDPOINT, dbClientManager));
         environment.addServlet(new TestWebSocketServlet(), TEST_WEBSOCKET_ENDPOINT);
         environment.addHealthCheck(new TemplateHealthCheck(template));
     }

@@ -1,5 +1,6 @@
 package com.bale_twine.colloquor.resources;
 
+import com.bale_twine.colloquor.MongoDBClientManager;
 import com.bale_twine.colloquor.api.Room;
 import com.bale_twine.colloquor.api.User;
 import com.bale_twine.colloquor.core.ActiveRooms;
@@ -34,9 +35,11 @@ public class ActiveRoomsResourceTest {
         HttpServletRequest mockRequest = mock(HttpServletRequest.class);
         HttpSession mockSession = mock(HttpSession.class);
 
+        MongoDBClientManager dbClientManager = mock(MongoDBClientManager.class);
+
         when(mockRequest.getSession()).thenReturn(mockSession);
 
-        ActiveRoomsResource activeRoomsResource = new ActiveRoomsResource();
+        ActiveRoomsResource activeRoomsResource = new ActiveRoomsResource(dbClientManager);
         ActiveRoomView activeRoomView = activeRoomsResource.getActiveRoomView(mockRequest);
 
         List<Room> rooms = activeRoomView.getRooms();
@@ -57,6 +60,8 @@ public class ActiveRoomsResourceTest {
         users.add(mock(User.class));
         when(testRoom.getOccupants()).thenReturn(users);
 
+        MongoDBClientManager dbClientManager = mock(MongoDBClientManager.class);
+
         HttpServletRequest mockRequest = mock(HttpServletRequest.class);
         HttpSession mockSession = mock(HttpSession.class);
 
@@ -64,7 +69,7 @@ public class ActiveRoomsResourceTest {
 
         activeRooms.add(testRoom);
 
-        ActiveRoomsResource activeRoomsResource = new ActiveRoomsResource();
+        ActiveRoomsResource activeRoomsResource = new ActiveRoomsResource(dbClientManager);
         ActiveRoomView activeRoomView = activeRoomsResource.getActiveRoomView(mockRequest);
 
         List<Room> rooms = activeRoomView.getRooms();
@@ -96,6 +101,8 @@ public class ActiveRoomsResourceTest {
         when(testRoom.getTitle()).thenReturn(title);
         when(testRoomOne.getTitle()).thenReturn(titleOne);
 
+        MongoDBClientManager dbClientManager = mock(MongoDBClientManager.class);
+
         HttpServletRequest mockRequest = mock(HttpServletRequest.class);
         HttpSession mockSession = mock(HttpSession.class);
 
@@ -106,7 +113,7 @@ public class ActiveRoomsResourceTest {
         activeRooms.add(testRoom);
         activeRooms.add(testRoomOne);
 
-        ActiveRoomsResource activeRoomsResource = new ActiveRoomsResource();
+        ActiveRoomsResource activeRoomsResource = new ActiveRoomsResource(dbClientManager);
         ActiveRoomView activeRoomView = activeRoomsResource.getActiveRoomView(mockRequest);
 
         List<Room> rooms = activeRoomView.getRooms();

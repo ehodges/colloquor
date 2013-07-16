@@ -1,5 +1,6 @@
 package com.bale_twine.colloquor.resources;
 
+import com.bale_twine.colloquor.MongoDBClientManager;
 import com.bale_twine.colloquor.api.User;
 import com.bale_twine.colloquor.core.ActiveRooms;
 import com.bale_twine.colloquor.core.ActiveRoomsAccessor;
@@ -21,6 +22,7 @@ public class RoomResourceTest {
 
     public static final String TEST_USERNAME_ONE = "Graham Chapman";
     private static final String TEST_USERNAME_TWO = "Eric Idle";
+    private static final String TEST_GUID_ONE = "773fd569-9e61-4f61-ba61-db7c1b077101";
     public static final String TEST_WEB_SOCKET_ENDPOINT = "WEB_SOCKET_ENDPOINT";
 
     @After
@@ -31,7 +33,9 @@ public class RoomResourceTest {
 
     @Test
     public void testGetExistingRoom() {
-        RoomResource roomResource = new RoomResource(TEST_WEB_SOCKET_ENDPOINT);
+        MongoDBClientManager dbClientManager = mock(MongoDBClientManager.class);
+
+        RoomResource roomResource = new RoomResource(TEST_WEB_SOCKET_ENDPOINT, dbClientManager);
 
         ActiveRooms activeRooms = ActiveRoomsAccessor.getActiveRooms();
         com.bale_twine.colloquor.core.Room newRoom = new com.bale_twine.colloquor.core.Room(new User(TEST_USERNAME_ONE));
@@ -44,7 +48,9 @@ public class RoomResourceTest {
 
     @Test
     public void testGetExistingRoomView() {
-        RoomResource roomResource = new RoomResource(TEST_WEB_SOCKET_ENDPOINT);
+        MongoDBClientManager dbClientManager = mock(MongoDBClientManager.class);
+
+        RoomResource roomResource = new RoomResource(TEST_WEB_SOCKET_ENDPOINT, dbClientManager);
 
         ActiveRooms activeRooms = ActiveRoomsAccessor.getActiveRooms();
         com.bale_twine.colloquor.core.Room newRoom = mock(com.bale_twine.colloquor.core.Room.class);
@@ -63,13 +69,17 @@ public class RoomResourceTest {
 
     @Test
     public void testCreateRoom() {
-        RoomResource roomResource = new RoomResource(TEST_WEB_SOCKET_ENDPOINT);
+        MongoDBClientManager mockDbClientManager = mock(MongoDBClientManager.class);
+
+        RoomResource roomResource = new RoomResource(TEST_WEB_SOCKET_ENDPOINT, mockDbClientManager);
 
         HttpServletRequest mockRequest = mock(HttpServletRequest.class);
         HttpSession mockSession = mock(HttpSession.class);
 
-        when(mockSession.getAttribute("username")).thenReturn(TEST_USERNAME_ONE);
+        when(mockSession.getAttribute("guid")).thenReturn(TEST_GUID_ONE);
         when(mockRequest.getSession()).thenReturn(mockSession);
+
+        when(mockDbClientManager.getUsername(TEST_GUID_ONE)).thenReturn(TEST_USERNAME_ONE);
 
         Room room = roomResource.createRoom(mockRequest);
 
@@ -82,7 +92,9 @@ public class RoomResourceTest {
 
     @Test
     public void testGetRoomAddsUser() {
-        RoomResource roomResource = new RoomResource(TEST_WEB_SOCKET_ENDPOINT);
+        MongoDBClientManager dbClientManager = mock(MongoDBClientManager.class);
+
+        RoomResource roomResource = new RoomResource(TEST_WEB_SOCKET_ENDPOINT, dbClientManager);
 
         ActiveRooms activeRooms = ActiveRoomsAccessor.getActiveRooms();
         com.bale_twine.colloquor.core.Room mockRoom = mock(com.bale_twine.colloquor.core.Room.class);

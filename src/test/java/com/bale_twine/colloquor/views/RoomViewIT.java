@@ -1,10 +1,12 @@
 package com.bale_twine.colloquor.views;
 
+import com.bale_twine.colloquor.MongoDBClientManager;
 import com.bale_twine.colloquor.api.User;
 import com.bale_twine.colloquor.core.ActiveRooms;
 import com.bale_twine.colloquor.core.ActiveRoomsAccessor;
 import com.bale_twine.colloquor.core.Room;
 import com.bale_twine.colloquor.resources.RoomResource;
+import org.junit.Before;
 import org.junit.Test;
 
 import javax.servlet.http.HttpServletRequest;
@@ -12,6 +14,7 @@ import javax.servlet.http.HttpSession;
 
 import java.util.Iterator;
 import java.util.Set;
+import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -23,18 +26,31 @@ public class RoomViewIT {
     private static final String TEST_USER_ONE = "John Cleese";
     private static final String TEST_USER_TWO = "Michael Palin";
     private static final String TEST_USER_THREE = "Terry Jones";
+    private static final String TEST_GUID_ONE = "faa1253e-081a-4f0c-9219-faf0246506f8";
+    private static final String TEST_GUID_TWO = "773fd569-9e61-4f61-ba61-db7c1b077101";
 
     public static final String TEST_WEB_SOCKET_ENDPOINT = "WEB_SOCKET_ENDPOINT";
+
+    HttpServletRequest mockRequest;
+    HttpSession mockSession;
+    MongoDBClientManager mockDbClientManager;
+
+    @Before
+    public void setUpCoreMocks() {
+        mockDbClientManager = mock(MongoDBClientManager.class);
+        mockRequest = mock(HttpServletRequest.class);
+        mockSession = mock(HttpSession.class);
+
+        when(mockSession.getAttribute("guid")).thenReturn(TEST_GUID_ONE);
+        when(mockRequest.getSession()).thenReturn(mockSession);
+
+        when(mockDbClientManager.getUsername(TEST_GUID_ONE)).thenReturn(TEST_USER_ONE);
+        when(mockDbClientManager.getUsername(TEST_GUID_TWO)).thenReturn(TEST_USER_TWO);
+    }
 
     @Test
     public void testRoomWithName() {
         final String TEST_ROOM_NAME = "A Test Room Name";
-
-        HttpServletRequest mockRequest = mock(HttpServletRequest.class);
-        HttpSession mockSession = mock(HttpSession.class);
-
-        when(mockSession.getAttribute("username")).thenReturn(TEST_USER_ONE);
-        when(mockRequest.getSession()).thenReturn(mockSession);
 
         ActiveRooms activeRooms = ActiveRoomsAccessor.getActiveRooms();
         User user = new User(TEST_USER_ONE);
@@ -43,7 +59,7 @@ public class RoomViewIT {
         String id = room.getId().toString();
         activeRooms.add(room);
 
-        RoomResource roomResource = new RoomResource(TEST_WEB_SOCKET_ENDPOINT);
+        RoomResource roomResource = new RoomResource(TEST_WEB_SOCKET_ENDPOINT, mockDbClientManager);
         RoomView roomView = roomResource.getRoomView(mockRequest, id);
 
         assertEquals(TEST_ROOM_NAME, roomView.getName());
@@ -53,12 +69,6 @@ public class RoomViewIT {
 
     @Test
     public void testRoomWithoutName() {
-        HttpServletRequest mockRequest = mock(HttpServletRequest.class);
-        HttpSession mockSession = mock(HttpSession.class);
-
-        when(mockSession.getAttribute("username")).thenReturn(TEST_USER_ONE);
-        when(mockRequest.getSession()).thenReturn(mockSession);
-
         ActiveRooms activeRooms = ActiveRoomsAccessor.getActiveRooms();
         User user = new User(TEST_USER_ONE);
         Room room = new Room(user);
@@ -66,7 +76,7 @@ public class RoomViewIT {
         String id = room.getId().toString();
         activeRooms.add(room);
 
-        RoomResource roomResource = new RoomResource(TEST_WEB_SOCKET_ENDPOINT);
+        RoomResource roomResource = new RoomResource(TEST_WEB_SOCKET_ENDPOINT, mockDbClientManager);
         RoomView roomView = roomResource.getRoomView(mockRequest, id);
 
         assertEquals(id, roomView.getId());
@@ -76,17 +86,18 @@ public class RoomViewIT {
 
     @Test
     public void testEnteringRoomAddsUser() {
+
         HttpServletRequest mockRequestOne = mock(HttpServletRequest.class);
         HttpSession mockSessionOne = mock(HttpSession.class);
 
         HttpServletRequest mockRequestTwo = mock(HttpServletRequest.class);
         HttpSession mockSessionTwo = mock(HttpSession.class);
 
-        when(mockSessionOne.getAttribute("username")).thenReturn(TEST_USER_ONE);
+        when(mockSessionOne.getAttribute("guid")).thenReturn(TEST_GUID_ONE);
         when(mockRequestOne.getSession()).thenReturn(mockSessionOne);
         User userOne = new User(TEST_USER_ONE);
 
-        when(mockSessionTwo.getAttribute("username")).thenReturn(TEST_USER_TWO);
+        when(mockSessionTwo.getAttribute("guid")).thenReturn(TEST_GUID_TWO);
         when(mockRequestTwo.getSession()).thenReturn(mockSessionTwo);
         User userTwo = new User(TEST_USER_TWO);
 
@@ -100,7 +111,7 @@ public class RoomViewIT {
 
         activeRooms.add(roomOne);
 
-        RoomResource rr = new RoomResource(TEST_WEB_SOCKET_ENDPOINT);
+        RoomResource rr = new RoomResource(TEST_WEB_SOCKET_ENDPOINT, mockDbClientManager);
         RoomView rv = rr.getRoomView(mockRequestTwo, idOne);
         Set<User> occupants = rv.getOccupants();
 
@@ -116,7 +127,10 @@ public class RoomViewIT {
         HttpServletRequest mockRequestOne = mock(HttpServletRequest.class);
         HttpSession mockSessionOne = mock(HttpSession.class);
 
-        when(mockSessionOne.getAttribute("username")).thenReturn(TEST_USER_ONE);
+        MongoDBClientManager mockDbClientManager = mock(MongoDBClientManager.class);
+        when(mockDbClientManager.getUsername(TEST_GUID_TWO)).thenReturn(TEST_USER_ONE);
+
+        when(mockSessionOne.getAttribute("guid")).thenReturn(TEST_GUID_TWO);
         when(mockRequestOne.getSession()).thenReturn(mockSessionOne);
         User userOne = new User(TEST_USER_ONE);
 
@@ -128,7 +142,7 @@ public class RoomViewIT {
 
         activeRooms.add(roomOne);
 
-        RoomResource rr = new RoomResource(TEST_WEB_SOCKET_ENDPOINT);
+        RoomResource rr = new RoomResource(TEST_WEB_SOCKET_ENDPOINT, mockDbClientManager);
 
         RoomView rv = rr.getRoomView(mockRequestOne, idOne);
         Set<User> occupants = rv.getOccupants();
@@ -138,18 +152,17 @@ public class RoomViewIT {
 
     @Test
     public void testEnteringRoomAddsNewUserOnly() {
-
         HttpServletRequest mockRequestOne = mock(HttpServletRequest.class);
         HttpSession mockSessionOne = mock(HttpSession.class);
 
         HttpServletRequest mockRequestTwo = mock(HttpServletRequest.class);
         HttpSession mockSessionTwo = mock(HttpSession.class);
 
-        when(mockSessionOne.getAttribute("username")).thenReturn(TEST_USER_ONE);
+        when(mockSessionOne.getAttribute("guid")).thenReturn(TEST_GUID_ONE);
         when(mockRequestOne.getSession()).thenReturn(mockSessionOne);
         User userOne = new User(TEST_USER_ONE);
 
-        when(mockSessionTwo.getAttribute("username")).thenReturn(TEST_USER_TWO);
+        when(mockSessionTwo.getAttribute("guid")).thenReturn(TEST_GUID_TWO);
         when(mockRequestTwo.getSession()).thenReturn(mockSessionTwo);
         User userTwo = new User(TEST_USER_TWO);
 
@@ -164,7 +177,7 @@ public class RoomViewIT {
         activeRooms.add(roomOne);
         activeRooms.add(roomTwo);
 
-        RoomResource rr = new RoomResource(TEST_WEB_SOCKET_ENDPOINT);
+        RoomResource rr = new RoomResource(TEST_WEB_SOCKET_ENDPOINT, mockDbClientManager);
         RoomView rv = rr.getRoomView(mockRequestTwo, idOne);
         Set<User> occupants = rv.getOccupants();
         assertEquals(2, occupants.size());
@@ -177,50 +190,4 @@ public class RoomViewIT {
         occupants = rv.getOccupants();
         assertEquals(1, occupants.size());
     }
-
-    /*
-    @Test
-    public void testEnteringRoomAddsNewUserOnly() {
-        final String TEST_USER_ONE = "John Cleese";
-        final String TEST_USER_TWO = "Michael Palin";
-
-        HttpServletRequest mockRequestOne = mock(HttpServletRequest.class);
-        HttpSession mockSessionOne = mock(HttpSession.class);
-
-        HttpServletRequest mockRequestTwo = mock(HttpServletRequest.class);
-        HttpSession mockSessionTwo = mock(HttpSession.class);
-
-        when(mockSessionOne.getAttribute("username")).thenReturn(TEST_USER_ONE);
-        when(mockRequestOne.getSession()).thenReturn(mockSessionOne);
-        User userOne = new User(TEST_USER_ONE);
-
-        when(mockSessionTwo.getAttribute("username")).thenReturn(TEST_USER_TWO);
-        when(mockRequestTwo.getSession()).thenReturn(mockSessionTwo);
-        User userTwo = new User(TEST_USER_TWO);
-
-        ActiveRooms activeRooms = ActiveRoomsAccessor.getActiveRooms();
-
-        Room roomOne = new Room(userOne);
-        Room roomTwo = new Room(userTwo);
-
-        String idOne = roomOne.getId().toString();
-        String idTwo = roomTwo.getId().toString();
-
-        activeRooms.add(roomOne);
-        activeRooms.add(roomTwo);
-
-        RoomResource rr = new RoomResource();
-        RoomView rv = rr.getRoomView(mockRequestTwo, idOne);
-        Set<User> occupants = rv.getOccupants();
-        assertEquals(2, occupants.size());
-
-        rv = rr.getRoomView(mockRequestTwo, idOne);
-        occupants = rv.getOccupants();
-        assertEquals(2, occupants.size());
-
-        rv = rr.getRoomView(mockRequestOne, idOne);
-        occupants = rv.getOccupants();
-        assertEquals(1, occupants.size());
-    }
-    */
 }

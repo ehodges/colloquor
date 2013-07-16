@@ -1,5 +1,6 @@
 package com.bale_twine.colloquor.resources;
 
+import com.bale_twine.colloquor.MongoDBClientManager;
 import com.bale_twine.colloquor.api.User;
 import org.junit.Test;
 
@@ -12,31 +13,41 @@ import javax.servlet.http.HttpSession;
 
 public class UserResourceTest {
 
+    private static final String TEST_GUID_ONE = "773fd569-9e61-4f61-ba61-db7c1b077101";
+
     @Test
     public void testAddUserName() {
-        UserResource userResource = new UserResource();
+        String name = "Ed";
+
+        MongoDBClientManager mockDbClientManager = mock(MongoDBClientManager.class);
 
         HttpServletRequest mockRequest = mock(HttpServletRequest.class);
         HttpSession mockSession = mock(HttpSession.class);
-        String name = "Ed";
 
+        when(mockSession.getAttribute("guid")).thenReturn(TEST_GUID_ONE);
         when(mockRequest.getSession()).thenReturn(mockSession);
+
+        UserResource userResource = new UserResource(mockDbClientManager);
 
         User user = userResource.updateUsername(mockRequest, new User(name));
         assertEquals(name, user.getName());
         verify(mockRequest).getSession();
-        verify(mockSession).setAttribute("username", name);
+        verify(mockDbClientManager).setUsername(TEST_GUID_ONE, name);
     }
 
     @Test
     public void testRetrieveUserName() {
-        UserResource userResource = new UserResource();
+        MongoDBClientManager mockDbClientManager = mock(MongoDBClientManager.class);
 
         HttpServletRequest mockRequest = mock(HttpServletRequest.class);
         HttpSession mockSession = mock(HttpSession.class);
 
-        when(mockSession.getAttribute("username")).thenReturn("Ed");
+        when(mockSession.getAttribute("guid")).thenReturn(TEST_GUID_ONE);
         when(mockRequest.getSession()).thenReturn(mockSession);
+
+        when(mockDbClientManager.getUsername(TEST_GUID_ONE)).thenReturn("Ed");
+
+        UserResource userResource = new UserResource(mockDbClientManager);
 
         User user = userResource.retrieveUserName(mockRequest);
         assertEquals("Ed", user.getName());
@@ -44,13 +55,16 @@ public class UserResourceTest {
 
     @Test
     public void testRetrieveAlternateUserName() {
-        UserResource userResource = new UserResource();
+        MongoDBClientManager mockDbClientManager = mock(MongoDBClientManager.class);
 
         HttpServletRequest mockRequest = mock(HttpServletRequest.class);
         HttpSession mockSession = mock(HttpSession.class);
 
-        when(mockSession.getAttribute("username")).thenReturn("Bob");
+        when(mockSession.getAttribute("guid")).thenReturn(TEST_GUID_ONE);
         when(mockRequest.getSession()).thenReturn(mockSession);
+        when(mockDbClientManager.getUsername(TEST_GUID_ONE)).thenReturn("Bob");
+
+        UserResource userResource = new UserResource(mockDbClientManager);
 
         User user = userResource.retrieveUserName(mockRequest);
         assertEquals("Bob", user.getName());
@@ -58,12 +72,16 @@ public class UserResourceTest {
 
     @Test
     public void testRetrieveDefaultUserName() {
-        UserResource userResource = new UserResource();
+        MongoDBClientManager mockDbClientManager = mock(MongoDBClientManager.class);
 
         HttpServletRequest mockRequest = mock(HttpServletRequest.class);
         HttpSession mockSession = mock(HttpSession.class);
 
+        when(mockSession.getAttribute("guid")).thenReturn(TEST_GUID_ONE);
         when(mockRequest.getSession()).thenReturn(mockSession);
+        when(mockDbClientManager.getUsername(TEST_GUID_ONE)).thenReturn("Some Guy");
+
+        UserResource userResource = new UserResource(mockDbClientManager);
 
         User user = userResource.retrieveUserName(mockRequest);
         assertEquals("Some Guy", user.getName());

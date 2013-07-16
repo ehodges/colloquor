@@ -13,36 +13,28 @@ import static org.mockito.Mockito.when;
 public class SessionDataHelperTest {
 
     @Test
-    public void testGetUsername() {
+    public void testGetNewGUID() {
         HttpServletRequest mockRequest = mock(HttpServletRequest.class);
         HttpSession mockSession = mock(HttpSession.class);
 
-        when(mockSession.getAttribute("username")).thenReturn("Ed");
+        when(mockSession.getAttribute(SessionDataHelper.GUID_KEY)).thenReturn(null);
         when(mockRequest.getSession()).thenReturn(mockSession);
 
-        String username = SessionDataHelper.getUsername(mockRequest);
-        assertEquals("Ed", username);
+        String guid = SessionDataHelper.getGUID(mockRequest);
+        assertNotNull(guid);
+        assertFalse(guid.isEmpty());
     }
 
     @Test
-    public void testGetUsernameReturnsDefault() {
+    public void testNewGUIDPersists() {
         HttpServletRequest mockRequest = mock(HttpServletRequest.class);
         HttpSession mockSession = mock(HttpSession.class);
+
+        when(mockSession.getAttribute(SessionDataHelper.GUID_KEY)).thenReturn(null);
         when(mockRequest.getSession()).thenReturn(mockSession);
 
-        String username = SessionDataHelper.getUsername(mockRequest);
-        assertEquals("Some Guy", username);
-    }
+        String guid = SessionDataHelper.getGUID(mockRequest);
 
-    @Test
-    public void testSetUsername() {
-        HttpServletRequest mockRequest = mock(HttpServletRequest.class);
-        HttpSession mockSession = mock(HttpSession.class);
-        when(mockRequest.getSession()).thenReturn(mockSession);
-
-        String username = "Bob";
-        SessionDataHelper.setUsername(mockRequest, username);
-        verify(mockRequest).getSession();
-        verify(mockSession).setAttribute("username", username);
+        verify(mockSession).setAttribute(SessionDataHelper.GUID_KEY, guid);
     }
 }
