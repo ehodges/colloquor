@@ -9,6 +9,8 @@
         video {
             width: 50%;
             border: 1px solid black;
+            -webkit-transform: scaleX(-1);
+            transform: scaleX(-1);
         }
 
         #browserSupportFailureAlert {
@@ -47,7 +49,7 @@
     <h2>Test WebSockets</h2>
     <div class="well">
         <textarea id="webSocketConsole"></textarea></pre>
-        <p><button id="pingButton" class="btn btn-large btn-primary" type="button" disabled="disabled">Ping Server</p>
+        <p><button id="pingButton" class="btn btn-large btn-primary" type="button" disabled="disabled">Ping Server</button></p>
     </div>
 </div>
 <script src="/assets/js/jquery-1.9.1.min.js"></script>
