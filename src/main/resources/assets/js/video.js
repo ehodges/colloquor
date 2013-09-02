@@ -12,7 +12,8 @@ var initVideo = function() {
     }
 
     onGotStream = function(stream) {
-        var url = webkitURL.createObjectURL(stream);
+        var createObjectURL = (window.URL || window.webkitURL || {}).createObjectURL || function(){};
+        var url = createObjectURL(stream);
         video.src = url;
         lmsObject = stream;
         $('#stopButton').prop('disabled', false);
