@@ -52,14 +52,19 @@ public class ColloquorService extends Service<ColloquorConfiguration> {
         SessionHandler sessionHandler = getSessionHandler(configuration, dbClientManager);
         environment.setSessionHandler(sessionHandler);
 
+        addResources(environment, template, defaultName, dbClientManager);
+
+        environment.addServlet(new TestWebSocketServlet(), TEST_WEBSOCKET_ENDPOINT);
+        environment.addHealthCheck(new TemplateHealthCheck(template));
+    }
+
+    private void addResources(Environment environment, String template, String defaultName, MongoDBClientManager dbClientManager) {
         environment.addResource(new HelloWorldResource(template, defaultName));
         environment.addResource(new HomeResource(dbClientManager));
         environment.addResource(new TestPageResource(dbClientManager, TEST_WEBSOCKET_ENDPOINT));
         environment.addResource(new UserResource(dbClientManager));
         environment.addResource(new ActiveRoomsResource(dbClientManager));
         environment.addResource(new RoomResource(ROOM_WEBSOCKET_ENDPOINT, dbClientManager));
-        environment.addServlet(new TestWebSocketServlet(), TEST_WEBSOCKET_ENDPOINT);
-        environment.addHealthCheck(new TemplateHealthCheck(template));
     }
 
     private MongoDBClientManager getMongoDBClientManager(ColloquorConfiguration configuration) throws UnknownHostException {

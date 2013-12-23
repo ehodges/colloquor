@@ -1,3 +1,5 @@
 {
-    "name": "Test Name"
+    "_id": "123ABC",
+    "name": "Test Name",
+    "guid": "ABC123"
 }

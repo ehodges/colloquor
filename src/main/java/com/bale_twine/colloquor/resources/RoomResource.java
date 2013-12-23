@@ -32,16 +32,16 @@ public class RoomResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Room createRoom(@Context HttpServletRequest request) {
         String guid = SessionDataHelper.getGUID(request);
-        String name = dbClientManager.getUsername(guid);
+        User user = dbClientManager.getUser(guid);
 
-        com.bale_twine.colloquor.core.Room newRoom = new com.bale_twine.colloquor.core.Room(new User(name));
+        com.bale_twine.colloquor.core.Room newRoom = new com.bale_twine.colloquor.core.Room(user);
         ActiveRooms activeRooms = ActiveRoomsAccessor.getActiveRooms();
         activeRooms.add(newRoom);
 
         Room room = new Room(newRoom.getId());
 
         Set<User> occupants = room.getOccupants();
-        occupants.add(new User(name));
+        occupants.add(user);
         room.setOccupants(occupants);
 
         return room;
@@ -68,15 +68,13 @@ public class RoomResource {
         ActiveRooms activeRooms = ActiveRoomsAccessor.getActiveRooms();
 
         String guid = SessionDataHelper.getGUID(request);
-        String name = dbClientManager.getUsername(guid);
+        User user = dbClientManager.getUser(guid);
 
         com.bale_twine.colloquor.core.Room room = activeRooms.getRoom(uuid);
 
-        User user = new User(name);
-
         room.addUser(user);
 
-        return new RoomView(room, name, websocketEndpoint);
+        return new RoomView(room, user.getName(), websocketEndpoint);
     }
 
 //    @PUT

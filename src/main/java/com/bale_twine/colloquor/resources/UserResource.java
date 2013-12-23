@@ -35,7 +35,6 @@ public class UserResource {
     @Produces(MediaType.APPLICATION_JSON)
     public User retrieveUserName(@Context HttpServletRequest request) {
         String userGUID = SessionDataHelper.getGUID(request);
-        String name = dbClientManager.getUsername(userGUID);
-        return new User(name);
+        return dbClientManager.getUser(userGUID);
     }
 }

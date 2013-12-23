@@ -45,7 +45,7 @@ public class UserResourceTest {
         when(mockSession.getAttribute("guid")).thenReturn(TEST_GUID_ONE);
         when(mockRequest.getSession()).thenReturn(mockSession);
 
-        when(mockDbClientManager.getUsername(TEST_GUID_ONE)).thenReturn("Ed");
+        when(mockDbClientManager.getUser(TEST_GUID_ONE)).thenReturn(new User("Ed"));
 
         UserResource userResource = new UserResource(mockDbClientManager);
 
@@ -62,7 +62,7 @@ public class UserResourceTest {
 
         when(mockSession.getAttribute("guid")).thenReturn(TEST_GUID_ONE);
         when(mockRequest.getSession()).thenReturn(mockSession);
-        when(mockDbClientManager.getUsername(TEST_GUID_ONE)).thenReturn("Bob");
+        when(mockDbClientManager.getUser(TEST_GUID_ONE)).thenReturn(new User("Bob"));
 
         UserResource userResource = new UserResource(mockDbClientManager);
 
@@ -79,7 +79,7 @@ public class UserResourceTest {
 
         when(mockSession.getAttribute("guid")).thenReturn(TEST_GUID_ONE);
         when(mockRequest.getSession()).thenReturn(mockSession);
-        when(mockDbClientManager.getUsername(TEST_GUID_ONE)).thenReturn("Some Guy");
+        when(mockDbClientManager.getUser(TEST_GUID_ONE)).thenReturn(new User("Some Guy"));
 
         UserResource userResource = new UserResource(mockDbClientManager);
 

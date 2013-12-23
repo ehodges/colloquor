@@ -43,7 +43,7 @@ public class UserTest {
 
     @Test
     public void deserializesFromJSON() throws Exception {
-        final User user = new User("Test Name");
+        final User user = new User("Test Name", "ABC123", "123ABC");
 
         assertThat("parsing a valid API representation produces a user",
                 fromJson(jsonFixture("fixtures/user.json"), User.class),
@@ -52,7 +52,7 @@ public class UserTest {
 
     @Test
     public void serializesToJSON() throws Exception {
-        final User user = new User("Test Name");
+        final User user = new User("Test Name", "ABC123", "123ABC");
         assertThat("a User can be serialized to JSON",
                 asJson(user),
                 is(equalTo(jsonFixture("fixtures/user.json"))));

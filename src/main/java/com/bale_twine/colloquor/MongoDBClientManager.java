@@ -1,7 +1,11 @@
 package com.bale_twine.colloquor;
 
+import com.bale_twine.colloquor.api.User;
 import com.mongodb.*;
 import com.yammer.dropwizard.lifecycle.Managed;
+import org.mongojack.DBQuery;
+import org.mongojack.JacksonDBCollection;
+import org.mongojack.WriteResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,7 +18,7 @@ public class MongoDBClientManager implements Managed {
     public static final String DEFAULT_USERNAME = "Some Guy";
     public static final String USERS_COLLECTION_KEY = "users";
     public static final String USER_GUID_KEY = "guid";
-    public static final String USERNAME_KEY = "username";
+    public static final WriteConcern WRITE_CONCERN = WriteConcern.SAFE;
 
     private MongoClient mongoClient;
     private DB colloquorDB;
@@ -37,33 +41,59 @@ public class MongoDBClientManager implements Managed {
         mongoClient.close();
     }
 
-    public MongoClient getClient() {
-        return mongoClient;
-    }
-
     public DB getDB() {
         return colloquorDB;
     }
 
     public String getUsername(String GUID) {
-        DBCollection usersCollection = colloquorDB.getCollection(USERS_COLLECTION_KEY);
-        DBObject queryObject = new BasicDBObject(USER_GUID_KEY, GUID);
-        DBCursor cursor = usersCollection.find(queryObject);
-
-        int num = cursor.count();
-
-        String name = DEFAULT_USERNAME;
-
-        if (num > 0) {
-            name = (String) cursor.next().get(USERNAME_KEY);
-        }
-
-        return name;
+        User user = getUser(GUID);
+        return user.getName();
     }
 
     public void setUsername(String GUID, String userName) {
+        User existingUser = getUser(GUID);
+
+        if (existingUser != null) {
+            existingUser.setName(userName);
+            updateUser(existingUser);
+        }
+    }
+
+    public User getUser(String GUID) {
+        JacksonDBCollection<User, String> wrappedCollection = getWrappedUserCollection();
+
+        org.mongojack.DBCursor<User> usersResult = wrappedCollection.find(DBQuery.is(USER_GUID_KEY, GUID));
+
+        if (usersResult.count() == 1) {
+            return usersResult.next();
+        } else {
+            return new User(DEFAULT_USERNAME, GUID);
+        }
+    }
+
+    private boolean addUser(User user) {
+        JacksonDBCollection<User, String> wrappedCollection = getWrappedUserCollection();
+
+        WriteResult<User, String> result = wrappedCollection.insert(user, WRITE_CONCERN);
+
+        return result.getLastError().ok();
+    }
+
+    private boolean updateUser(User user) {
+        JacksonDBCollection<User, String> wrappedCollection = getWrappedUserCollection();
+
+        WriteResult<User, String> result =
+                wrappedCollection.update(DBQuery.is(USER_GUID_KEY, user.getGuid()),
+                        user,
+                        true,
+                        false,
+                        WRITE_CONCERN);
+
+        return result.getLastError().ok();
+    }
+
+    private JacksonDBCollection<User, String> getWrappedUserCollection() {
         DBCollection usersCollection = colloquorDB.getCollection(USERS_COLLECTION_KEY);
-        DBObject insertObject = new BasicDBObject(USER_GUID_KEY, GUID).append(USERNAME_KEY, userName);
-        usersCollection.insert(insertObject);
+        return JacksonDBCollection.wrap(usersCollection, User.class, String.class);
     }
 }
